@@ -19,6 +19,7 @@ if (suppressWarnings(require("velociraptr"))==FALSE) {
 Driver<-dbDriver("PostgreSQL") # Establish database driver
 # Your Database
 Chips<-dbConnect(Driver, dbname = "chips", host = "localhost", port = 5432, user = "zaffos")
+Obis<-dbConnect(Driver, dbname = "obis", host = "localhost", port = 5432, user = "zaffos")
 
 #############################################################################################################
 ######################################### DATA DOWNLOAD FUNCTIONS, CHIPS ####################################
