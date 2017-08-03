@@ -197,6 +197,11 @@ colnames(TaxonBeta)<-c("Live","B","C","D")
 cor(TaxonBeta,use="pairwise.complete.obs")
                   
 # Plot the overall beta diversity consistency
+plot(y=TaxonBeta[,"B"],x=TaxonBeta[,"Live"],pch=16,cex=1.5,col="#57afe1",xaxs="i",yaxs="i",xlim=c(0,1),ylim=c(0,1),xlab="life assemblage endemism",ylab="death assemblage endemism")
+points(y=TaxonBeta[,"C"],x=TaxonBeta[,"Live"],pch=16,cex=1.5,col="#47a870")
+points(y=TaxonBeta[,"D"],x=TaxonBeta[,"Live"],pch=16,cex=1.5,col="#db4544")
+		  
+# Plot the overall
 
                   
                   
