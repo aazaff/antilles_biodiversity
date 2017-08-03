@@ -177,7 +177,12 @@ abline(v=17); abline(v=19)
 #############################################################################################################
 ############################################ ADP FUNCTIONS, CHIPS ###########################################
 #############################################################################################################
-# No functions at this time
+# Abundance transformation (standardization)
+transformAbundance<-function(CommunityMatrix) {
+	Standardized<-apply(apply(CommunityMatrix,1,function(x) x/max(x)),1,sum)
+	Standardized<-Standardized/max(Standardized)
+	return(Standardized)
+	}
 
 ################################################ ADP, CHIPS #################################################
 # Separate out the death assemblage samples by stratigraphic code
@@ -200,8 +205,13 @@ cor(TaxonBeta,use="pairwise.complete.obs")
 plot(y=TaxonBeta[,"B"],x=TaxonBeta[,"Live"],pch=16,cex=1.5,col="#57afe1",xaxs="i",yaxs="i",xlim=c(0,1),ylim=c(0,1),xlab="life assemblage endemism",ylab="death assemblage endemism")
 points(y=TaxonBeta[,"C"],x=TaxonBeta[,"Live"],pch=16,cex=1.5,col="#47a870")
 points(y=TaxonBeta[,"D"],x=TaxonBeta[,"Live"],pch=16,cex=1.5,col="#db4544")
-		  
-# Plot the overall
 
-                  
-                  
+# Calculate the numeric abundance distribution
+DeadAbundance<-lapply(DeadDivisions,transformAbundance)
+
+# Merge the abundance data together		  
+TaxonAbundance<-transform(merge(DeadAbundance[["B"]],DeadAbundance[["C"]],by="row.names",all=TRUE),Row.names=NULL,row.names=Row.names)
+TaxonAbundance<-transform(merge(TaxonAbundance,DeadAbundance[["D"]],by="row.names",all=TRUE),Row.names=NULL,row.names=Row.names)
+# Merge with the live assemblage taxon betas
+TaxonAbundance<-transform(merge(transformAbundance(cullMatrix(LiveAssemblage,1,1)),TaxonAbundance,by="row.names",all=TRUE),Row.names=NULL,row.names=Row.names)
+colnames(TaxonAbundance)<-c("Live","B","C","D")
