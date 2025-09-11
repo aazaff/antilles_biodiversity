@@ -1,19 +1,49 @@
 #from Cayman_2018
 #also, Cayman_Main.R (not Rmd)
 
-library(vegan)
-library(betapart)
-library(tidyverse)
-library(lattice)
+# Install libraries if necessary and load them into the environment
+if (suppressWarnings(require("velociraptr"))==FALSE) {
+    install.packages("velociraptr",repos="https://cloud.r-project.org");
+    library("velociraptr");
+    }
+
+# Install libraries if necessary and load them into the environment
+if (suppressWarnings(require("vegan"))==FALSE) {
+    install.packages("vegan",repos="https://cloud.r-project.org");
+    library("vegan");
+    }
+
+# Install libraries if necessary and load them into the environment
+if (suppressWarnings(require("betapart"))==FALSE) {
+    install.packages("betapart",repos="https://cloud.r-project.org");
+    library("betapart");
+    }
+
+# Install libraries if necessary and load them into the environment
+# Gross, deeply disappointing to have to install it... - AZ
+if (suppressWarnings(require("tidyverse"))==FALSE) {
+    install.packages("tidyverse",repos="https://cloud.r-project.org");
+    library("tidyverse");
+    }
+
+# Install libraries if necessary and load them into the environment
+if (suppressWarnings(require("lattice"))==FALSE) {
+    install.packages("lattice",repos="https://cloud.r-project.org");
+    library("lattice");
+    }
 
 #importing shell data####
-setwd("~/Documents/2_Research/1_Grand_Cayman_2018/Data")#Cay.raw.preT<-read.csv(file="Cayman_2018.csv",row.names=1)
+#setwd("~/Documents/2_Research/1_Grand_Cayman_2018/Data")
+#Cay.raw.preT<-read.csv(file="Cayman_2018.csv",row.names=1)
+# Changed to using github links so that working directory is no longer an issue - AZ
+
+
 #dead
-  Cay.raw.preT<-read.csv(file="Cayman_Data_18.csv",row.names=1)
+  Cay.raw.preT<-read.csv(file="https://raw.githubusercontent.com/aazaff/antilles_biodiversity/refs/heads/master/data/Cayman_Data_18.csv",row.names=1)
   Cay.raw.preMNI<-as.data.frame(t(Cay.raw.preT))#raw values, transformed so species are columns and samples are rows
   colnames(Cay.raw.preMNI)<-str_replace(colnames(Cay.raw.preMNI),"_"," ")#replace "_" with " " in colnames; names don't match perfectly with Cay.fam, but they are the same (spelling differences only)
 #live
-  CayL.raw.preT<-read.csv(file="Cayman_Data_Live_18.csv",row.names=1)
+  CayL.raw.preT<-read.csv(file="https://raw.githubusercontent.com/aazaff/antilles_biodiversity/refs/heads/master/data/Cayman_Data_Live_18.csv",row.names=1)
   CayL.raw.preMNI<-as.data.frame(t(CayL.raw.preT))#raw values, transformed so species are columns and samples are rows
   colnames(CayL.raw.preMNI)<-str_replace(colnames(Cay.raw.preMNI),"_"," ")#replace "_" with " " in colnames; names don't match perfectly with Cay.fam, but they are the same (spelling differences only)
 
@@ -48,10 +78,10 @@ EBS<-which(substr(rownames(Cay.raw),1,3)=="EBS")
 
 #combining dead and live by site, with family names (Table 2)  
 #Cay.fam<-read.csv("Cayman_Data_18_WithFamilies_new.csv",header=T,row.names=3)
-Cay.fam<-read.csv("Fam_Cay_newest.csv",header=T,row.names=3)
+Cay.fam<-read.csv(file="https://raw.githubusercontent.com/aazaff/antilles_biodiversity/refs/heads/master/data/Fam_Cay_newest.csv",header=T,row.names=3)
 DL.bysite<-t(rbind(Cay.raw.site,CayL.raw.site))
 DL.fam<-data.frame(Class=Cay.fam$Class,Family=Cay.fam$Family,DL.bysite) #MNI bivalves, live and dead, integers
-write.csv(DL.fam,"DL.fam.new.csv")
+# write.csv(DL.fam,"DL.fam.new.csv")
 
 #Basic Diversity Statistics####
 #summary
@@ -193,13 +223,16 @@ write.csv(DL.fam,"DL.fam.new.csv")
   print(collEBSL,position=c(0.51,0.1,0.99,0.39))#lowright
 ##somehow the summary() function in Cayman_main estimates completeness
 ##plots were made here and then combined in Illustrator
+### lol - AZ
 
-#ADP Analysis####
-  ADP.groups<-read.csv(file="ADP_groups.csv",header=T,row.names=1)
-  #dead
-  Cay.raw.nosingles.int<-round(Cay.raw,0)#integer values,singletons removed for ADP analysis
-  Cay.raw.nosingles<-Cay.raw.nosingles.int[,colSums(Cay.raw.nosingles.int)>1]#integer values,singletons removed for ADP analysis
-  Cay.ADP.S<-adipart(Cay.raw.nosingles ~ .,ADP.groups,index="richness",nsimul=999,method="r2dtable",na.rm=T)#ADP Richness
+######################################### ADP RICHNESS #########################################
+# load data
+ADP.groups<-read.csv(file="https://raw.githubusercontent.com/aazaff/antilles_biodiversity/refs/heads/master/data/ADP_groups.csv",header=T,row.names=1)
+
+#dead
+Cay.raw.nosingles.int<-round(Cay.raw,0)#integer values,singletons removed for ADP analysis
+Cay.raw.nosingles<-Cay.raw.nosingles.int[,colSums(Cay.raw.nosingles.int)>1]#integer values,singletons removed for ADP analysis
+Cay.ADP.S<-adipart(Cay.raw.nosingles ~ .,ADP.groups,index="richness",nsimul=999,method="r2dtable",na.rm=T)#ADP Richness
 
 #live
   CayL.raw.int<-round(CayL.raw,0)#integer values,singletons NOT excluded
@@ -282,7 +315,7 @@ ADP.Table.S<-data.frame(D_L=rep("Dead",18),
                              )
 )
 
-write.csv(ADP.Table.S,"Full_Dead_ADP_Table_new.csv")
+# write.csv(ADP.Table.S,"Full_Dead_ADP_Table_new.csv")
 
 #Master ADP table in long form for faceting in ggplot only
 ADP.Table.long<-gather(ADP.Table,key="measure",value="value",c("observed","expected"))
@@ -299,7 +332,7 @@ ADPL.Table.S<-data.frame(D_L=rep("Live",18),
                       CI97.5=round(c(apply(CayL.ADP.S$oecosimu$simulated, 1, quantile, probs=c(0.975))[c(1,6:9,5)],apply(CayL.ADP.S.grass$oecosimu$simulated, 1, quantile, probs=c(0.975))[c(1,6:9,5)],apply(CayL.ADP.S.sand$oecosimu$simulated, 1, quantile, probs=c(0.975))[c(1,6:9,5)])),
                       pval=c(CayL.ADP.S$oecosimu$pval[c(1,6:9,NA)],CayL.ADP.S.grass$oecosimu$pval[c(1,6:9,NA)],CayL.ADP.S.sand$oecosimu$pval[c(1,6:9,NA)])#36
 )
-write.csv(ADPL.Table.S,"Full_Live_ADP_Table_new.csv")
+# write.csv(ADPL.Table.S,"Full_Live_ADP_Table_new.csv")
 
 #Master ADPL table in long form for faceting in ggplot only
 ADPL.Table.long<-gather(ADPL.Table.S,key="measure",value="value",c("observed","expected"))
@@ -327,7 +360,196 @@ ggplot(ADPL.Table.long[!ADPL.Table.long$scale=="g",], aes(fill=factor(ADPL.Table
   scale_x_discrete(labels=c("obs","exp")) +
   facet_wrap(. ~ sites + weight,nrow=1,ncol=6)
 
-#ADP Analysis - Hill=1####
+#############################################################################################################
+############################################ MANUAL CHECK OF ADP  ###########################################
+#############################################################################################################
+# Calculate Alpha of jth taxon
+taxonAlpha = function(CommunityMatrix) {
+	Nj = apply(CommunityMatrix, MARGIN=2, FUN=function(x) length(which(x>0))) # this works, but is malformed and brittle... come back and do it right!
+	Samples = nrow(CommunityMatrix)
+	Alphaj = Nj/Samples
+	names(Alphaj) = colnames(CommunityMatrix)
+	return(Alphaj)
+	}
+
+# Calculate total alpha diversity
+meanAlpha = function (CommunityMatrix) {
+	return(sum(taxonAlpha(CommunityMatrix)))
+	}
+
+# Calculate beta of jth taxon
+taxonBeta = function(CommunityMatrix) {
+	Nj = apply(CommunityMatrix, MARGIN=2, FUN=function(x) length(which(x>0))) # this works, but is malformed and brittle... come back and do it right!
+	Samples = nrow(CommunityMatrix)
+	Betaj = (Samples - Nj) / Samples
+	names(Betaj) = colnames(CommunityMatrix)
+    return(Betaj)
+    }
+
+# Calculate sample beta
+sampleBeta = function(CommunityMatrix) {
+	Betaj = taxonBeta(CommunityMatrix)
+	Nj = apply(CommunityMatrix, MARGIN=2, FUN=function(x) length(which(x>0))) # this works, but is malformed and brittle... come back and do it right!
+	NSamples = nrow(CommunityMatrix)
+	Betai = vector(mode="numeric", length=NSamples)
+	for (i in seq_len(NSamples)) {
+		Betai[i] = sum(Betaj / Nj * CommunityMatrix[i, ])
+		}
+	names(Betai) = rownames(CommunityMatrix)
+	return(Betai)
+	}
+
+# Calculate beta diversity
+totalBeta = function (CommunityMatrix) {
+	return(sum(taxonBeta(CommunityMatrix)))
+	}
+
+# Calculate gamma diversity
+totalGamma = function(CommunityMatrix) {
+	Gamma = length(which(apply(CommunityMatrix,2,sum)>0))
+    return(Gamma)
+	}
+
+# load the breakdown of data into groups
+ADP.groups<-read.csv(file="https://raw.githubusercontent.com/aazaff/antilles_biodiversity/refs/heads/master/data/ADP_groups.csv",header=T,row.names=1)
+
+# round(x,0) is used elsewhere, but since you cannot have a half an individual it should always be rounded up - i.e., so that taxa with values of 0.5 don't become zero
+Dead = ceiling(Cay.raw)
+Live = ceiling(CayL.raw)
+
+# Quick sanity check of raw calculation vs. adipart for alpha and beta
+meanAlpha(Dead)
+totalGamma(Dead)
+adipart(Dead ~ .,ADP.groups,index="richness",nsimul=999,method="r2dtable",na.rm=T)
+# Quick sanity check of raw caclulation for a4 and beta4
+RP = subset(Dead,substr(rownames(Dead),1,2)=="RP")
+SS = subset(Dead,substr(rownames(Dead),1,2)=="SS")
+EB = subset(Dead,substr(rownames(Dead),1,2)=="EB")
+mean(c(totalGamma(RP),totalGamma(SS),totalGamma(EB)))
+B4 = rbind(apply(RP,2,sum),apply(SS,2,sum),apply(EB,2,sum))
+totalBeta(B4) # the beta is off by a value of 1 (see above note about malformed count)
+# Quick sanity check of Shannon and Hill's
+mean(apply(B4,1,diversity)) # manual a4
+diversity(apply(B4,2,sum))
+adipart(Dead ~ .,ADP.groups,index="shannon",nsimul=999,method="r2dtable",na.rm=T)
+
+
+#dead
+  Cay.ADP.S.grass<-adipart(Cay.raw.nosingles[c(RPG,SSG,EBG),] ~ .,ADP.groups[c(RPG,SSG,EBG),],index="richness",nsimul=999,method="r2dtable",na.rm=T)
+  Cay.ADP.S.sand<-adipart(Cay.raw.nosingles[c(RPS,SSS,EBS),] ~ .,ADP.groups[c(RPS,SSS,EBS),],index="richness",nsimul=999,method="r2dtable",na.rm=T)
+  #weighted by sample abundance (Don't want/need these when using Hill numbers)
+#  Cay.ADP.S.grass.weight<-adipart(Cay.raw.nosingles[c(RPG,SSG,EBG),] ~ .,ADP.groups[c(RPG,SSG,EBG),],index="richness",nsimul=999,method="r2dtable",na.rm=T,weight="prop")
+#  Cay.ADP.S.sand.weight<-adipart(Cay.raw.nosingles[c(RPS,SSS,EBS),] ~ .,ADP.groups[c(RPS,SSS,EBS),],index="richness",nsimul=999,method="r2dtable",na.rm=T,weight="prop")
+#live
+  CayL.ADP.S.grass<-adipart(CayL.raw.int[c(RPG,SSG,EBG),] ~ .,ADP.groups[c(RPG,SSG,EBG),],index="richness",nsimul=999,method="r2dtable",na.rm=T)
+  CayL.ADP.S.sand<-adipart(CayL.raw.int[c(RPS,SSS,EBS),] ~ .,ADP.groups[c(RPS,SSS,EBS),],index="richness",nsimul=999,method="r2dtable",na.rm=T)
+  #weighted by sample abundance (Don't want/need these when using Hill numbers)
+#  CayL.ADP.S.grass.weight<-adipart(CayL.raw.int[c(RPG,SSG,EBG),] ~ .,ADP.groups[c(RPG,SSG,EBG),],index="richness",nsimul=999,method="r2dtable",na.rm=T,weight="prop")
+#  CayL.ADP.S.sand.weight<-adipart(CayL.raw.int[c(RPS,SSS,EBS),] ~ .,ADP.groups[c(RPS,SSS,EBS),],index="richness",nsimul=999,method="r2dtable",na.rm=T,weight="prop")
+  
+
+#DEAD: Master ADP table with all analyses (REMOVE WEIGHTED)
+ADP.Table.S<-data.frame(D_L=rep("Dead",18),
+                      sites=c(rep("all",6),rep("grass",6),rep("sand",6)),#36
+                      #sites=c(rep("all",12),rep("grass",12),rep("sand",12)),#36
+                      method=rep("Richness",18),
+                      scale=rep(c("a1","B1","B2","B3","B4","g"),3), #36
+                      #scale=rep(c("a1","B1","B2","B3","B4","g"),6), #36
+                      #weight=rep(c(rep("uniform",6),rep("weighted",6)),3),#36
+                      observed=round(c(Cay.ADP.S$statistic[c(c(1,6:9,5))],
+                                       #Cay.ADP.S.weight$statistic[c(1,6:9,5)],
+                                       Cay.ADP.S.grass$statistic[c(1,6:9,5)],
+                                       #Cay.ADP.S.grass.weight$statistic[c(1,6:9,5)],
+                                       Cay.ADP.S.sand$statistic[c(1,6:9,5)]#,
+                                       #Cay.ADP.S.sand.weight$statistic[c(1,6:9,5)]
+                                       )
+                                    ),
+                      percent=c(round(Cay.ADP.S$statistic[c(1,6:9,5)]/Cay.ADP.S$statistic[5]*100,2),
+                                    #round(Cay.ADP.S.weight$statistic[c(1,6:9,5)]/Cay.ADP.S.weight$statistic[5]*100,2),
+                                    round(Cay.ADP.S.grass$statistic[c(1,6:9,5)]/Cay.ADP.S.grass$statistic[5]*100,2),
+                                    #round(Cay.ADP.S.grass.weight$statistic[c(1,6:9,5)]/Cay.ADP.S.grass.weight$statistic[5]*100,2),
+                                    round(Cay.ADP.S.sand$statistic[c(1,6:9,5)]/Cay.ADP.S.sand$statistic[5]*100,2)#,
+                                    #round(Cay.ADP.S.sand.weight$statistic[c(1,6:9,5)]/Cay.ADP.S.sand.weight$statistic[5]*100,2)
+                                ),
+                      expected=round(c(Cay.ADP.S$oecosimu$means[c(1,6:9,5)],
+                                    #Cay.ADP.S.weight$oecosimu$means[c(1,6:9,5)],
+                                    Cay.ADP.S.grass$oecosimu$means[c(1,6:9,5)],
+                                    #Cay.ADP.S.grass.weight$oecosimu$means[c(1,6:9,5)],
+                                    Cay.ADP.S.sand$oecosimu$means[c(1,6:9,5)]#,
+                                    #Cay.ADP.S.sand.weight$oecosimu$means[c(1,6:9,5)]
+                                      )
+                                    ),
+                      CI2.5=round(c(apply(Cay.ADP.S$oecosimu$simulated, 1, quantile, probs=c(0.025))[c(1,6:9,5)],
+                                    #apply(Cay.ADP.S.weight$oecosimu$simulated, 1, quantile, probs=c(0.025))[c(1,6:9,5)],
+                                    apply(Cay.ADP.S.grass$oecosimu$simulated, 1, quantile, probs=c(0.025))[c(1,6:9,5)],
+                                    #apply(Cay.ADP.S.grass.weight$oecosimu$simulated, 1, quantile, probs=c(0.025))[c(1,6:9,5)],
+                                    apply(Cay.ADP.S.sand$oecosimu$simulated, 1, quantile, probs=c(0.025))[c(1,6:9,5)]#,
+                                    #apply(Cay.ADP.S.sand.weight$oecosimu$simulated, 1, quantile, probs=c(0.025))[c(1,6:9,5)]
+                                    )
+                                  ),
+                      CI97.5=round(c(apply(Cay.ADP.S$oecosimu$simulated, 1, quantile, probs=c(0.975))[c(1,6:9,5)],
+                                    #apply(Cay.ADP.S.weight$oecosimu$simulated, 1, quantile, probs=c(0.975))[c(1,6:9,5)],
+                                    apply(Cay.ADP.S.grass$oecosimu$simulated, 1, quantile, probs=c(0.975))[c(1,6:9,5)],
+                                    #apply(Cay.ADP.S.grass.weight$oecosimu$simulated, 1, quantile, probs=c(0.975))[c(1,6:9,5)],
+                                    apply(Cay.ADP.S.sand$oecosimu$simulated, 1, quantile, probs=c(0.975))[c(1,6:9,5)]#,
+                                    #apply(Cay.ADP.S.sand.weight$oecosimu$simulated, 1, quantile, probs=c(0.975))[c(1,6:9,5)]
+                                    )
+                                  ),
+                      pval=c(Cay.ADP.S$oecosimu$pval[c(1,6:9,NA)],
+                                    #Cay.ADP.S.weight$oecosimu$pval[c(1,6:9,NA)],
+                                    Cay.ADP.S.grass$oecosimu$pval[c(1,6:9,NA)],
+                                    #Cay.ADP.S.grass.weight$oecosimu$pval[c(1,6:9,NA)],
+                                    Cay.ADP.S.sand$oecosimu$pval[c(1,6:9,NA)]#,
+                                    #Cay.ADP.S.sand.weight$oecosimu$pval[c(1,6:9,NA)]
+                             )
+)
+
+# write.csv(ADP.Table.S,"Full_Dead_ADP_Table_new.csv")
+
+#Master ADP table in long form for faceting in ggplot only
+ADP.Table.long<-gather(ADP.Table,key="measure",value="value",c("observed","expected"))
+
+# LIVE: Master ADP table with alldead analyses
+ADPL.Table.S<-data.frame(D_L=rep("Live",18),
+                      sites=c(rep("all",6),rep("grass",6),rep("sand",6)),
+                      method=rep("Richness",18),
+                      scale=rep(c("a1","B1","B2","B3","B4","g"),3),
+                      observed=round(c(CayL.ADP.S$statistic[c(c(1,6:9,5))],CayL.ADP.S.grass$statistic[c(1,6:9,5)],CayL.ADP.S.sand$statistic[c(1,6:9,5)])),#36
+                      percent=c(round(CayL.ADP.S$statistic[c(1,6:9,5)]/CayL.ADP.S$statistic[5]*100,2),round(CayL.ADP.S.grass$statistic[c(1,6:9,5)]/CayL.ADP.S.grass$statistic[5]*100,2),round(CayL.ADP.S.sand$statistic[c(1,6:9,5)]/CayL.ADP.S.sand$statistic[5]*100,2)),#36
+                      expected=round(c(CayL.ADP.S$oecosimu$means[c(1,6:9,5)],CayL.ADP.S.grass$oecosimu$means[c(1,6:9,5)],CayL.ADP.S.sand$oecosimu$means[c(1,6:9,5)])),#36
+                      CI2.5=round(c(apply(CayL.ADP.S$oecosimu$simulated, 1, quantile, probs=c(0.025))[c(1,6:9,5)],apply(CayL.ADP.S.grass$oecosimu$simulated, 1, quantile, probs=c(0.025))[c(1,6:9,5)],apply(CayL.ADP.S.sand$oecosimu$simulated, 1, quantile, probs=c(0.025))[c(1,6:9,5)])),#36  
+                      CI97.5=round(c(apply(CayL.ADP.S$oecosimu$simulated, 1, quantile, probs=c(0.975))[c(1,6:9,5)],apply(CayL.ADP.S.grass$oecosimu$simulated, 1, quantile, probs=c(0.975))[c(1,6:9,5)],apply(CayL.ADP.S.sand$oecosimu$simulated, 1, quantile, probs=c(0.975))[c(1,6:9,5)])),
+                      pval=c(CayL.ADP.S$oecosimu$pval[c(1,6:9,NA)],CayL.ADP.S.grass$oecosimu$pval[c(1,6:9,NA)],CayL.ADP.S.sand$oecosimu$pval[c(1,6:9,NA)])#36
+)
+# write.csv(ADPL.Table.S,"Full_Live_ADP_Table_new.csv")
+
+#Master ADPL table in long form for faceting in ggplot only
+ADPL.Table.long<-gather(ADPL.Table.S,key="measure",value="value",c("observed","expected"))
+
+Rich.ADP <- rbind(ADP.Table.S,ADPL.Table.S)#all dead and live ADP values, RICHNESS
+
+#plotting ADP####
+
+#ALL PLOTS IN ONE FIGURE!
+#dead
+ggplot(ADP.Table.long[!ADP.Table.long$scale=="g",], aes(fill=factor(ADP.Table.long[!ADP.Table.long$scale=="g",]$scale,levels=c("B4","B3","B2","B1","a1")),x=factor(measure,levels=c("observed","expected")), y=value)) +
+  #geom_col() + #raw values
+  geom_bar(position="fill",stat="identity") + #percentages
+  labs(fill="partition level",x="",title="") +
+  #scale_y_continuous(name="value", breaks=seq(0,1,.2)) + #uncomment if using percentages
+  scale_x_discrete(labels=c("obs","exp")) +
+  #facet_wrap(. ~ sites + weight,nrow=1,ncol=6)
+  facet_wrap(. ~ sites,nrow=1,ncol=3)
+#live
+ggplot(ADPL.Table.long[!ADPL.Table.long$scale=="g",], aes(fill=factor(ADPL.Table.long[!ADPL.Table.long$scale=="g",]$scale,levels=c("B5","B4","B3","B2","B1","a1")),x=factor(measure,levels=c("observed","expected")), y=value)) +
+  #geom_col() + #raw values
+  geom_bar(position="fill",stat="identity") + #percentages
+  labs(fill="partition level",x="",title="") +
+  #scale_y_continuous(name="value", breaks=seq(0,1,.2)) + #uncomment if using percentages
+  scale_x_discrete(labels=c("obs","exp")) +
+  facet_wrap(. ~ sites + weight,nrow=1,ncol=6)
+
+######################################### ADP HILL1, Using vegan >2.8 #########################################
 #change nsimul back to 999 for final iteration
 #r2dtable and quasiswap_count are producing negative values in Cay.ADP.S.grass...
 #dead
