@@ -410,6 +410,21 @@ totalGamma = function(CommunityMatrix) {
     return(Gamma)
 	}
 
+# general formula for alpha (equal weights)
+genAlpha = function(CommunityMatrix,q=0) {
+    N = nrow(CommunityMatrix)
+    Output = vector("numeric",length=N)
+    for (j in seq_len(N)) {
+        Nonzero = CommunityMatrix[j,CommunityMatrix[j,]>0]
+        Relative = Nonzero/sum(Nonzero)
+        Sum = sum(Relative^q)
+        Output[j] = (1/N)*Sum
+        }
+    Mean = sum(Output)
+    Result = Mean^(1/(1-q))
+    return(Result)
+    }
+
 # load the breakdown of data into groups
 ADP.groups<-read.csv(file="https://raw.githubusercontent.com/aazaff/antilles_biodiversity/refs/heads/master/data/ADP_groups.csv",header=T,row.names=1)
 
@@ -430,8 +445,13 @@ B4 = rbind(apply(RP,2,sum),apply(SS,2,sum),apply(EB,2,sum))
 totalBeta(B4) # the beta is off by a value of 1 (see above note about malformed count)
 # Quick sanity check of Shannon and Hill's
 mean(apply(B4,1,diversity)) # manual a4
-diversity(apply(B4,2,sum))
+diversity(apply(Dead,2,sum)) # manual gamma
 adipart(Dead ~ .,ADP.groups,index="shannon",nsimul=999,method="r2dtable",na.rm=T)
+# alpha using Jost alpha formula
+genAlpha(Dead,0)
+genAlpha(Dead,0.99)
+genAlpha(Dead,2)
+genAlpha(B4,0)
 
 
 #dead
